@@ -89,9 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const currentMonth = now.getMonth();
 
-        // 現在所属している週の終わり(日曜日)を計算
-        let dayOfWeek = now.getDay(); // 0:Sun, 1:Mon...
-        let daysToSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek;
+        // 現在所属している週の終わり(土曜日)を計算（カレンダーが日曜始まりのため）
+        let dayOfWeek = now.getDay(); // 0:Sun, 1:Mon ... 6:Sat
+        let daysToSaturday = 6 - dayOfWeek;
 
         // 日ごとにループして集計
         let iterDate = new Date(startOfToday);
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             totalFreeHours += netHours;
 
-            if (iterDays <= daysToSunday) {
+            if (iterDays <= daysToSaturday) {
                 thisWeekFreeHours += netHours;
             }
 
