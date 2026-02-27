@@ -54,9 +54,9 @@ body {
 
 .header {
     text-align: center;
-    padding-right: 280px;
-    /* カレンダーウィジェット 250px + marginで重なりを防ぐ */
     padding-top: 1rem;
+    position: relative;
+    z-index: 5;
 }
 
 .title {
@@ -74,7 +74,7 @@ body {
 
 .subtitle {
     font-family: 'Noto Serif JP', serif;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     color: #c4b0a1;
     letter-spacing: 0.15em;
     border-bottom: 1px solid rgba(217, 94, 57, 0.2);
@@ -165,18 +165,19 @@ body {
 .stat-label {
     display: block;
     font-family: 'Noto Serif JP', serif;
-    font-size: 0.9rem;
+    font-size: 1.5em;
+    /* 1.5emへ拡大 */
     color: #cbd5e1;
     margin-bottom: 1rem;
 }
 
 .stat-value {
-    font-size: 2.5rem;
+    font-size: 3rem;
     font-weight: 700;
 }
 
 .stat-unit {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     margin-left: 0.2rem;
     color: #a39081;
 }
@@ -197,7 +198,8 @@ body {
 
 .chart-title {
     font-family: 'Noto Serif JP', serif;
-    font-size: 1.1rem;
+    font-size: 1.35rem;
+    /* 1.5倍程度に拡大 */
     margin-bottom: 1.5rem;
     color: #e2e8f0;
     border-bottom: 1px solid var(--border-color);
@@ -345,7 +347,7 @@ body {
 
 /* API連携などのメッセージ用 */
 .info-message {
-    font-size: 0.8rem;
+    font-size: 0.95rem;
     color: #f4b036;
     text-align: center;
     margin-top: 1rem;
@@ -356,13 +358,13 @@ body {
 
 .gcal-btn {
     width: 100%;
-    padding: 0.6rem;
+    padding: 0.8rem;
     margin-top: 0.8rem;
     background: rgba(217, 94, 57, 0.15);
     border: 1px solid var(--text-accent);
     border-radius: 8px;
     color: var(--text-primary);
-    font-size: 0.85rem;
+    font-size: 1.05rem;
     cursor: pointer;
     transition: background 0.3s ease, transform 0.2s ease;
     font-family: 'Noto Serif JP', serif;

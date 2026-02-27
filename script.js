@@ -13,10 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const HOURS_IN_DAY = 24;
     const SLEEP_HOURS = 7;
     const MEAL_HOURS = 2;
-    const FIXED_UNAVAILABLE_HOURS_PER_DAY = SLEEP_HOURS + MEAL_HOURS; // 9時間
-    const BASE_FREE_HOURS_PER_DAY = HOURS_IN_DAY - FIXED_UNAVAILABLE_HOURS_PER_DAY; // 休日の自由時間: 15時間
+    const DAILY_SIDE_BUSINESS_HOURS = 1; // 副業時間（毎日固定1時間）
+    const FIXED_UNAVAILABLE_HOURS_PER_DAY = SLEEP_HOURS + MEAL_HOURS + DAILY_SIDE_BUSINESS_HOURS; // 10時間
+    const BASE_FREE_HOURS_PER_DAY = HOURS_IN_DAY - FIXED_UNAVAILABLE_HOURS_PER_DAY; // 休日の自由時間: 14時間
     const WORK_HOURS_PER_WEEKDAY = 8;
-    const WEEKDAY_FREE_HOURS = BASE_FREE_HOURS_PER_DAY - WORK_HOURS_PER_WEEKDAY; // 3/9以降の平日の自由時間: 7時間
+    const WEEKDAY_FREE_HOURS = BASE_FREE_HOURS_PER_DAY - WORK_HOURS_PER_WEEKDAY; // 3/9以降の平日の自由時間: 6時間
 
     // 月間固定案件
     const MONTHLY_SIDE_BUSINESS_HOURS = 35;
@@ -107,7 +108,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const dailySideBusinessDeduction = MONTHLY_SIDE_BUSINESS_HOURS / daysInMonth;
 
             // 自由時間から1日分の案件時間を差し引く（マイナスにならないよう制御）
-            const netHours = Math.max(0, hours - dailySideBusinessDeduction);
+            let netHours = Math.max(0, hours - dailySideBusinessDeduction);
+
+            // 【リアルタイム計算】今日（初日）の場合は、現在時刻からの残り時間の割合を掛けて徐々に減らす
+            if (iterDays === 0) {
+                const nowMs = now.getTime();
+                const startOfTodayMs = startOfToday.getTime();
+                const endOfTodayMs = startOfTodayMs + 24 * 60 * 60 * 1000;
+
+                // 既に経過した時間の割合 (0.0 〜 1.0)
+                const elapsedFraction = (nowMs - startOfTodayMs) / (endOfTodayMs - startOfTodayMs);
+                // 残り時間の割合
+                const remainingFraction = Math.max(0, 1 - elapsedFraction);
+
+                netHours = netHours * remainingFraction;
+            }
 
             totalFreeHours += netHours;
 
@@ -173,7 +188,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     labels: {
                         padding: 20,
                         usePointStyle: true,
-                        color: '#d1bba4' // 伝統色の伜做色
+                        color: '#d1bba4', // 伝統色の伜做色
+                        font: {
+                            size: 16 // 1.5倍に拡大 (デフォルト12px)
+                        }
                     }
                 },
                 tooltip: {
@@ -188,21 +206,22 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         // 和風配色パレット
-        const COLOR_FREE = '#d45934';  // 朱色（自由時間）
-        const COLOR_MEAL = '#f4b036';  // 山吹色（食事）
-        const COLOR_WORK = '#1a7f79';  // 孔集青（仕事）
-        const COLOR_SLEEP = '#7b6ba1';  // 藤色（睡眠）
+        const COLOR_FREE = '#da8c4d';  // 萱草色系・少し黄色に寄せた明るい橙（自由時間）
+        const COLOR_MEAL = '#e0b55c';  // 朽葉色・やや彩度を落とし明度を上げた黄（食事）
+        const COLOR_WORK = '#489a95';  // 水浅葱系・明度を上げ彩度を落とした緑（仕事）
+        const COLOR_SLEEP = '#9b5a8e';  // 梅紫・赤紫色寄り（睡眠）
+        const COLOR_SIDEBUSINESS = '#2e5c8a'; // 瑠璃色・やや明るい藍色（副業）
         const BORDER_COLOR = '#1a1412'; // 背景色
 
-        // 平日チャート（8h労働 + 7h睡眠 + 2h食事（12-13時など）+ 7h自由）
+        // 平日チャート（8h労働 + 1h副業 + 7h睡眠 + 2h食事（12-13時など）+ 6h自由）
         const ctxWeekday = document.getElementById('weekdayChart').getContext('2d');
         new Chart(ctxWeekday, {
             type: 'doughnut',
             data: {
-                labels: ['仕事 8h', '睡眠 7h', '食事 2h（12-13時など）', '自由時間 7h'],
+                labels: ['仕事 8h', '副業 1h', '睡眠 7h', '食事 2h（12-13時など）', `自由時間 ${WEEKDAY_FREE_HOURS}h`],
                 datasets: [{
-                    data: [WORK_HOURS_PER_WEEKDAY, SLEEP_HOURS, MEAL_HOURS, WEEKDAY_FREE_HOURS],
-                    backgroundColor: [COLOR_WORK, COLOR_SLEEP, COLOR_MEAL, COLOR_FREE],
+                    data: [WORK_HOURS_PER_WEEKDAY, DAILY_SIDE_BUSINESS_HOURS, SLEEP_HOURS, MEAL_HOURS, WEEKDAY_FREE_HOURS],
+                    backgroundColor: [COLOR_WORK, COLOR_SIDEBUSINESS, COLOR_SLEEP, COLOR_MEAL, COLOR_FREE],
                     borderColor: BORDER_COLOR,
                     borderWidth: 3,
                     hoverOffset: 6
@@ -211,15 +230,15 @@ document.addEventListener('DOMContentLoaded', () => {
             options: commonOptions
         });
 
-        // 休日チャート（7h睡眠 + 2h食事 + 15h自由）
+        // 休日チャート（1h副業 + 7h睡眠 + 2h食事 + 14h自由）
         const ctxHoliday = document.getElementById('holidayChart').getContext('2d');
         new Chart(ctxHoliday, {
             type: 'doughnut',
             data: {
-                labels: ['睡眠 7h', '食事 2h（12-13時など）', '自由時間 15h'],
+                labels: ['副業 1h', '睡眠 7h', '食事 2h（12-13時など）', `自由時間 ${BASE_FREE_HOURS_PER_DAY}h`],
                 datasets: [{
-                    data: [SLEEP_HOURS, MEAL_HOURS, BASE_FREE_HOURS_PER_DAY],
-                    backgroundColor: [COLOR_SLEEP, COLOR_MEAL, COLOR_FREE],
+                    data: [DAILY_SIDE_BUSINESS_HOURS, SLEEP_HOURS, MEAL_HOURS, BASE_FREE_HOURS_PER_DAY],
+                    backgroundColor: [COLOR_SIDEBUSINESS, COLOR_SLEEP, COLOR_MEAL, COLOR_FREE],
                     borderColor: BORDER_COLOR,
                     borderWidth: 3,
                     hoverOffset: 6
