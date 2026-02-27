@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown to 7/13 Exhibition</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js for graph rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Identity Services (OAuth 2.0) -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Serif+JP:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Calendar Widget (Top Right) -->
+        <div class="calendar-widget glass-panel" id="calendar-widget">
+            <div class="calendar-header">
+                <button id="cal-prev" class="cal-nav-btn">&lt;</button>
+                <span id="cal-month-year"></span>
+                <button id="cal-next" class="cal-nav-btn">&gt;</button>
+            </div>
+            <div class="calendar-grid" id="calendar-grid">
+                <!-- JavaScriptでカレンダーを描画 -->
+            </div>
+            <div id="api-status-msg" class="info-message">
+                ※Google Calendar連携未設定
+            </div>
+            <button id="google-signin-btn" class="gcal-btn">
+                🗓 Googleカレンダーと接続
+            </button>
+        </div>
+
+        <!-- Header Section -->
+        <header class="header">
+            <h1 class="title">【紡】制作時間</h1>
+            <p class="subtitle">紡ぐ形が神になる - 個展搬入(7/13)まで</p>
+            <div class="today-date-display" id="today-date-display">--</div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Countdown Section -->
+            <section class="countdown-panel glass-panel">
+                <div class="days-remaining">
+                    <span class="label">残り日数</span>
+                    <div class="value" id="days-val">--</div>
+                    <span class="unit">DAYS</span>
+                </div>
+                <div class="time-stats">
+                    <div class="stat-box">
+                        <span class="stat-label">今週の自由時間</span>
+                        <div class="stat-value"><span id="week-time-val">--</span><span class="stat-unit">h</span></div>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">今月の自由時間</span>
+                        <div class="stat-value"><span id="month-time-val">--</span><span class="stat-unit">h</span>
+                        </div>
+                    </div>
+                    <div class="stat-box highlight-box">
+                        <span class="stat-label">総自由時間 (7/13まで)</span>
+                        <div class="stat-value"><span id="total-time-val">--</span><span class="stat-unit">h</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-panel">
+                <div class="chart-container glass-panel">
+                    <h2 class="chart-title">【平日】1日の生活リズム (3/9以降)</h2>
+                    <canvas id="weekdayChart"></canvas>
+                </div>
+                <div class="chart-container glass-panel">
+                    <h2 class="chart-title">【休日】1日の生活リズム</h2>
+                    <canvas id="holidayChart"></canvas>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>System Online: Renmenshi Time Management Protocol</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

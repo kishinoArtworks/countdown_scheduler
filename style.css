@@ -1,0 +1,375 @@
+:root {
+    /* 和風・暖色系のベース */
+    --bg-color-main: #1a1412;
+    /* 深みのある暗い茶褐色 */
+    --bg-color-panel: rgba(43, 28, 22, 0.75);
+    /* 温かみのある焦げ茶 */
+    --text-primary: #f8f1e5;
+    /* 生成り色（きなりいろ） */
+    --text-accent: #d95e39;
+    /* 朱色に近いオレンジ */
+    --text-accent-glow: #e67e58;
+    /* 朱色の光彩 */
+    --border-color: rgba(217, 94, 57, 0.3);
+    --glass-blur: blur(12px);
+
+    /* グラフ指定色 */
+    --chart-sleep: #7b6ba1;
+    /* 紫〜水色系（桔梗色・藤色） */
+    --chart-meal: #f4b036;
+    /* 黄色〜山吹色 */
+    --chart-work: #1a7f79;
+    /* ピーコックグリーン（孔雀青） */
+    --chart-free: #d45934;
+    /* オレンジ〜朱色 */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color-main);
+    background-image:
+        radial-gradient(circle at 10% 20%, rgba(212, 89, 52, 0.08) 0%, transparent 60%),
+        radial-gradient(circle at 90% 80%, rgba(244, 176, 54, 0.05) 0%, transparent 60%);
+    color: var(--text-primary);
+    font-family: 'Inter', 'Noto Serif JP', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.app-container {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.header {
+    text-align: center;
+    padding-right: 280px;
+    /* カレンダーウィジェット 250px + marginで重なりを防ぐ */
+    padding-top: 1rem;
+}
+
+.title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    background-image: linear-gradient(90deg, #e67e58, #f4b036);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 20px rgba(217, 94, 57, 0.4);
+    font-family: 'Noto Serif JP', serif;
+}
+
+.subtitle {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.1rem;
+    color: #c4b0a1;
+    letter-spacing: 0.15em;
+    border-bottom: 1px solid rgba(217, 94, 57, 0.2);
+    display: inline-block;
+    padding-bottom: 0.5rem;
+}
+
+.glass-panel {
+    background: var(--bg-color-panel);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.countdown-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.days-remaining {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.days-remaining .label {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.5rem;
+    color: #d1bba4;
+    margin-bottom: 0.5rem;
+}
+
+.days-remaining .value {
+    font-size: 6rem;
+    font-weight: 800;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 0 0 30px var(--text-accent-glow);
+}
+
+.days-remaining .unit {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--text-accent);
+    margin-top: 0.5rem;
+}
+
+.time-stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    width: 100%;
+}
+
+.stat-box {
+    flex: 1;
+    min-width: 200px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+.highlight-box {
+    border-color: var(--text-accent);
+    background: rgba(217, 94, 57, 0.08);
+}
+
+.highlight-box .stat-value {
+    color: var(--text-accent);
+}
+
+.stat-label {
+    display: block;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    margin-bottom: 1rem;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.stat-unit {
+    font-size: 1.2rem;
+    margin-left: 0.2rem;
+    color: #a39081;
+}
+
+.charts-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.chart-container {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chart-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: #e2e8f0;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #8c786a;
+    letter-spacing: 0.1em;
+    margin-top: 2rem;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.value {
+    animation: pulse 3s infinite;
+}
+
+@media (max-width: 768px) {
+    .charts-panel {
+        flex-direction: column;
+    }
+
+    .title {
+        font-size: 2rem;
+    }
+
+    .days-remaining .value {
+        font-size: 4rem;
+    }
+
+    .calendar-widget {
+        position: relative;
+        top: 0;
+        right: 0;
+        margin: 0 auto 2rem;
+    }
+}
+
+/* 追加: 本日の日付表示とカレンダー */
+.app-container {
+    position: relative;
+}
+
+.today-date-display {
+    margin-top: 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-accent);
+    letter-spacing: 0.1em;
+}
+
+.calendar-widget {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    width: 250px;
+    padding: 1.5rem;
+    font-size: 0.85rem;
+    z-index: 10;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+}
+
+.cal-nav-btn {
+    background: none;
+    border: none;
+    color: var(--text-accent);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0 0.5rem;
+    transition: color 0.3s;
+}
+
+.cal-nav-btn:hover {
+    color: var(--text-accent-glow);
+}
+
+.cal-nav-btn:disabled {
+    color: #555;
+    cursor: not-allowed;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+}
+
+.cal-day-name {
+    color: #d1bba4;
+    font-weight: 600;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 4px;
+}
+
+.cal-day {
+    padding: 6px 0;
+    border-radius: 4px;
+    color: #cbd5e1;
+}
+
+.cal-day.today {
+    background-color: rgba(217, 94, 57, 0.2);
+    color: var(--text-accent-glow);
+    font-weight: 800;
+    border: 1px solid var(--text-accent);
+}
+
+.cal-day.other-month {
+    color: #5c4a42;
+}
+
+.cal-day.holiday {
+    color: #d95e39;
+    /* 祝日・休日の朱色 */
+}
+
+/* API連携などのメッセージ用 */
+.info-message {
+    font-size: 0.8rem;
+    color: #f4b036;
+    text-align: center;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    border: 1px dashed rgba(244, 176, 54, 0.5);
+    border-radius: 4px;
+}
+
+.gcal-btn {
+    width: 100%;
+    padding: 0.6rem;
+    margin-top: 0.8rem;
+    background: rgba(217, 94, 57, 0.15);
+    border: 1px solid var(--text-accent);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    font-family: 'Noto Serif JP', serif;
+    letter-spacing: 0.05em;
+}
+
+.gcal-btn:hover {
+    background: rgba(217, 94, 57, 0.4);
+    transform: translateY(-1px);
+}
