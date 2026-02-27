@@ -323,31 +323,62 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // === Google Calendar API 連携 ===
+    let tokenClient = null;
+
+    // GISライブラリの読み込みを待ってtokenClientを初期化する
+    function waitForGISAndInit() {
+        const statusEl = document.getElementById('api-status-msg');
+        let attempts = 0;
+        const maxAttempts = 50; // 最大10秒間待機
+
+        const checkInterval = setInterval(() => {
+            attempts++;
+            if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+                clearInterval(checkInterval);
+                try {
+                    tokenClient = google.accounts.oauth2.initTokenClient({
+                        client_id: GOOGLE_CLIENT_ID,
+                        scope: CALENDAR_SCOPES,
+                        callback: async (response) => {
+                            if (response.error) {
+                                if (statusEl) statusEl.textContent = '❌ 認証エラー: ' + response.error;
+                                return;
+                            }
+                            accessToken = response.access_token;
+                            if (statusEl) statusEl.textContent = '✔ 認証成功。カレンダーデータ取得中...';
+                            await fetchCalendarEvents();
+                        }
+                    });
+                    if (statusEl) statusEl.textContent = '🟢 Google Calendar連携準備完了';
+                } catch (e) {
+                    if (statusEl) statusEl.textContent = '❌ GIS初期化エラー: ' + e.message;
+                }
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkInterval);
+                if (statusEl) statusEl.textContent = '❌ Googleライブラリの読み込みに失敗しました。ページを再読み込みしてください。';
+            }
+        }, 200);
+    }
+
     function initGoogleAuth() {
         const signInBtn = document.getElementById('google-signin-btn');
         if (!signInBtn) return;
 
+        // GISライブラリの読み込みを待機開始
+        waitForGISAndInit();
+
         signInBtn.addEventListener('click', () => {
-            if (typeof google === 'undefined' || !google.accounts) {
-                alert('Googleライブラリ読み込み中です。数秒後に再度お試しください。');
+            const statusEl = document.getElementById('api-status-msg');
+            if (!tokenClient) {
+                if (statusEl) statusEl.textContent = '⏳ Googleライブラリ読み込み中…数秒後に再度お試しください。';
                 return;
             }
-            const tokenClient = google.accounts.oauth2.initTokenClient({
-                client_id: GOOGLE_CLIENT_ID,
-                scope: CALENDAR_SCOPES,
-                callback: async (response) => {
-                    if (response.error) {
-                        const statusEl = document.getElementById('api-status-msg');
-                        if (statusEl) statusEl.textContent = `❌ 認証エラー: ${response.error}`;
-                        return;
-                    }
-                    accessToken = response.access_token;
-                    const statusEl = document.getElementById('api-status-msg');
-                    if (statusEl) statusEl.textContent = '✔ 認証成功。カレンダーデータ取得中...';
-                    await fetchCalendarEvents();
-                }
-            });
-            tokenClient.requestToken();
+            try {
+                if (statusEl) statusEl.textContent = '🔄 Google認証画面を起動中...';
+                tokenClient.requestAccessToken();
+            } catch (e) {
+                if (statusEl) statusEl.textContent = '❌ 認証起動エラー: ' + e.message;
+            }
         });
     }
 
